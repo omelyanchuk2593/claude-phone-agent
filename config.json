@@ -1,0 +1,9 @@
+{
+  "device": {
+    "address": "",
+    "owner_idle_seconds": 45,
+    "http_timeout": 30,
+    "tap_pause": [0.6, 1.4],
+    "shot_width": 540
+  }
+}

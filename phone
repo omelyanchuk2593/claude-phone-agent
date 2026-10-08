@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Обёртка запуска. Свой venv и СВОЙ порт adb-сервера (5137 вместо стандартного
+# 5037): на этом сервере живут чужие проекты, и общий adb-сервер означал бы,
+# что чужой `adb kill-server` рвёт связь с нашим телефоном.
+HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+export ANDROID_ADB_SERVER_PORT="${ANDROID_ADB_SERVER_PORT:-5137}"
+exec "$HERE/.venv/bin/python" "$HERE/phone.py" "$@"
