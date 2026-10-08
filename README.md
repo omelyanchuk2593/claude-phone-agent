@@ -11,6 +11,16 @@
 
 ![Как это устроено](https://raw.githubusercontent.com/omelyanchuk2593/claude-phone-agent/main/docs/img/diagram-scheme.png)
 
+## ✨ Что это даёт
+
+Всё, что человек делает на телефоне пальцами, агент может сделать сам — **по команде или на
+автопилоте**: писать первым и отвечать в директ, выкладывать контент, прогревать аккаунт, искать
+клиентов, разбирать конкурентов. И не только в Instagram, а в любом приложении.
+
+![Два режима](https://raw.githubusercontent.com/omelyanchuk2593/claude-phone-agent/main/docs/img/diagram-modes.png)
+
+![Что можно делать](https://raw.githubusercontent.com/omelyanchuk2593/claude-phone-agent/main/docs/img/diagram-possibilities.png)
+
 ## 📖 Пошаговая инструкция
 
 **[docs/GUIDE.md](docs/GUIDE.md)** — с нуля, со скриншотами, понятно даже школьнику. Около 40 минут.
