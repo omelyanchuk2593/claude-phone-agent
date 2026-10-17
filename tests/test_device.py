@@ -131,3 +131,36 @@ def test_config_defaults_present():
     cfg = device.load_config()
     for key in ("address", "owner_idle_seconds", "tap_pause", "shot_width"):
         assert key in cfg
+
+
+class _FakeDev(device.Device):
+    """Device без телефона: probe/wake подменены, считаем вызовы wake."""
+
+    def __init__(self, states, swipe):
+        super().__init__(cfg={**device.DEFAULTS, "swipe_unlock": swipe}, log=lambda *a: None)
+        self.states, self.woke = list(states), 0
+
+    def probe(self):
+        return self.states.pop(0)
+
+    def wake(self):
+        self.woke += 1
+        return self.states.pop(0)
+
+
+def test_swipe_unlock_only_when_enabled():
+    locked_on = {"screen_on": True, "locked": True, "lock_note": "", "idle": 300}
+    unlocked = {**locked_on, "locked": False}
+    # Рабочий телефон без PIN: горящий экран блокировки снимаем сами.
+    dev = _FakeDev([locked_on, unlocked], swipe=True)
+    assert dev.ensure_ready()["locked"] is False and dev.woke == 1
+    # Личный телефон: замок значит «у владельца» — не будим, отказываемся.
+    dev = _FakeDev([locked_on], swipe=False)
+    import pytest
+    with pytest.raises(device.OwnerBusy):
+        dev.ensure_ready()
+    assert dev.woke == 0
+    # Снять не вышло (вдруг всё-таки PIN) — отказ, а не работа поверх замка.
+    dev = _FakeDev([locked_on, locked_on], swipe=True)
+    with pytest.raises(device.OwnerBusy):
+        dev.ensure_ready()

@@ -32,6 +32,10 @@ DEFAULTS = {
     # Сколько секунд тишины на экране нужно, чтобы считать, что владелец
     # телефон отложил. Наши нажатия сюда не считаются (см. own_touch).
     "owner_idle_seconds": 45,
+    # Только для отдельного рабочего телефона БЕЗ PIN: видим экран блокировки —
+    # снимаем его сами (`wm dismiss-keyguard`), а не ждём человека. На личном
+    # телефоне с PIN держи выключенным: там замок значит «телефон у владельца».
+    "swipe_unlock": False,
     "http_timeout": 30,
     "tap_pause": [0.6, 1.4],
     "shot_width": 540,
@@ -420,6 +424,7 @@ class Device:
         должен остаться включённым с открытой клавиатурой кода.
         """
         self.shell("input keyevent KEYCODE_WAKEUP")
+        self._mark_touch()  # своё пробуждение не должно выглядеть как «телефон в руках»
         time.sleep(0.8)
         self.shell("wm dismiss-keyguard")
         time.sleep(1.2)
@@ -433,7 +438,7 @@ class Device:
     def ensure_ready(self, force=False):
         """Убедиться, что телефоном можно пользоваться, иначе OwnerBusy."""
         state = self.probe()
-        if state["screen_on"] is False:
+        if state["screen_on"] is False or (state["locked"] and self.cfg.get("swipe_unlock")):
             state = self.wake()
             if state["locked"]:
                 raise OwnerBusy("телефон заблокирован PIN-кодом; разблокируй его, "

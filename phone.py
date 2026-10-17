@@ -102,6 +102,9 @@ def cmd_status(dev, args):
     print(f"батарея: {battery}{', заряжается' if st['charging'] else ''}")
     from device import owner_verdict
     reason = owner_verdict(st, dev._own_touch_ago(), int(dev.cfg["owner_idle_seconds"]))
+    if reason and st["locked"] and dev.cfg.get("swipe_unlock"):
+        print("можно работать: да — экран блокировки без PIN, бот снимет его сам")
+        return
     print(f"можно работать: {'да' if not reason else 'нет — ' + reason}")
 
 
